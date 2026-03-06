@@ -1,29 +1,14 @@
 import numpy as np
 import pandas as pd
+import os
 from gplearn.genetic import SymbolicTransformer
 from sklearn.utils.random import check_random_state
 
-def generate_synthetic_rose_data(n_points=5000):
-    rng = check_random_state(0)
-
-    # Simulate ROSE price action: high volatility, mean-reverting but with trends
-    time = np.linspace(0, 100, n_points)
-    price = 0.05 + 0.02 * np.sin(time * 0.5) + 0.01 * np.random.randn(n_points).cumsum() * 0.1
-    price = np.maximum(price, 0.01) # Ensure positive
-
-    high = price + np.random.rand(n_points) * 0.002
-    low = price - np.random.rand(n_points) * 0.002
-    open_p = price + (np.random.rand(n_points) - 0.5) * 0.001
-    volume = np.random.rand(n_points) * 1000000
-
-    df = pd.DataFrame({
-        'timestamp': pd.date_range(start='2024-01-01', periods=n_points, freq='1h'),
-        'open': open_p,
-        'high': high,
-        'low': low,
-        'close': price,
-        'volume': volume
-    })
+def load_real_data(filepath='data/rose_hourly.csv'):
+    df = pd.read_csv(filepath, header=[0, 1], index_col=0)
+    # Flatten multi-index columns if necessary
+    df.columns = [col[0].lower() for col in df.columns]
+    df.index = pd.to_datetime(df.index)
     return df
 
 def evolve_indicators(df):
@@ -55,5 +40,8 @@ def evolve_indicators(df):
     return gp
 
 if __name__ == "__main__":
-    df = generate_synthetic_rose_data()
-    evolve_indicators(df)
+    if os.path.exists('data/rose_hourly.csv'):
+        df = load_real_data()
+        evolve_indicators(df)
+    else:
+        print("Real data not found. Please run fetch_real_data.py first.")
