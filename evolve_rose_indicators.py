@@ -4,7 +4,7 @@ import os
 from gplearn.genetic import SymbolicTransformer
 from sklearn.utils.random import check_random_state
 
-def load_real_data(filepath='data/rose_hourly.csv'):
+def load_real_data(filepath='data/rose_15m_yf.csv'):
     df = pd.read_csv(filepath, header=[0, 1], index_col=0)
     # Flatten multi-index columns if necessary
     df.columns = [col[0].lower() for col in df.columns]
@@ -40,8 +40,8 @@ def evolve_indicators(df):
     return gp
 
 if __name__ == "__main__":
-    if os.path.exists('data/rose_hourly.csv'):
+    if os.path.exists('data/rose_15m_yf.csv'):
         df = load_real_data()
         evolve_indicators(df)
     else:
-        print("Real data not found. Please run fetch_real_data.py first.")
+        print("Real data not found. Please run fetch_15m.py first.")
