@@ -1,55 +1,47 @@
-# High-Leverage Trading Strategies for ROSE/USDT (Binance Futures)
+# High-Leverage Trading Strategies for ROSE/USDT (10% TP / 2% SL)
 
-These strategies were developed using **Genetic Programming (GP)** to identify specific volume-price signatures that precede "explosive" moves in ROSE/USDT.
-
-## Rationale and Performance Metrics
-
-The following strategies were identified through a combination of GP evolution and historical backtesting on ROSE data (2020-2026).
+These strategies are specifically calibrated for a **5:1 Reward-to-Risk ratio**, targeting 10% price movements while maintaining a strict 2% stop-loss.
 
 ---
 
-## Strategy 1: The "Volumetric Engine" Breakout (VEB)
-**Rationale:** Highest-performing strategy in long-term testing. Targets the massive volume influx (8x-10x average) that occurs when a trend is about to accelerate into an explosive move.
-*   **Backtest Performance (2Y, 50x Leverage):**
-    *   **PnL Multiplier:** 27.56x (2,756% return over 2 years)
-    *   **Total Trades:** 75
-    *   **Win Rate:** 32.00%
-    *   **Max Drawdown:** 98.31%
-    *   **Monthly Target (30D):** Outperformed 11x (1000%) during peak volatility months (e.g., Jan 2026).
+## Performance Summary (2-Year Backtest)
+The following metrics represent the "Raw" performance (1x leverage) and "Aggressive" performance (10x-50x leverage) for the 10/2 risk profile.
+
+| Strategy | Raw Win Rate | break-even WR | 2Y PnL (1x) | 2Y PnL (10x) |
+| :--- | :--- | :--- | :--- | :--- |
+| **BB Squeeze Breakout** | 18.97% | 16.60% | 1.08x | 2.15x |
+| **Volumetric Engine** | 17.02% | 16.60% | 0.83x | 0.45x |
+| **GEMS Momentum** | 14.28% | 16.60% | 0.71x | 0.00x |
+
+---
+
+## Strategy 1: The "Volatility Squeeze" Breakout
+**Rationale:** The most viable strategy for a 10% TP. It enters only when historical volatility is low (Squeeze), meaning the 2% SL has a higher probability of surviving until the 10% move begins.
+*   **Indicator:** Bollinger Band Width < 0.05 AND Volume > 5x Average.
+*   **Entry Logic:** Price closes above the Upper Bollinger Band during a squeeze.
+*   **Target:** 10% Move.
+*   **Stop Loss:** 2.0%.
+
+## Strategy 2: The "Volumetric Engine" Swing
+**Rationale:** Captured 24 successful 10% gains over 2 years. It uses a 50-period SMA filter to ensure entries are only taken in established uptrends.
 *   **Indicator:** `mul(volume, div(volume, rolling_mean(volume, 24)))`.
-*   **Entry Logic:**
-    *   Volume > 10x the average of the last 24 periods.
-    *   Price breaks above the 24-period High.
-*   **Risk Management:**
-    *   **Stop Loss:** 0.5% (25% equity risk at 50x).
-    *   **Take Profit:** 3.0% (150% equity gain at 50x).
+*   **Entry Logic:** Volume Spike > 8x AND Price > SMA-50.
+*   **Risk:** 2% SL.
 
-## Strategy 2: Volatility Trap (Exhaustion Reversal)
-**Rationale:** Captures the sharp reversal that follows a "liquidity grab" or stop-hunt wick. This strategy has a lower trade frequency but higher reliability during "altcoin season" blow-off events.
-*   **Backtest Performance (2Y, 50x Leverage):**
-    *   **PnL Multiplier:** 15.44x (1,544% return)
-    *   **Total Trades:** 58
-    *   **Win Rate:** 32.76%
-    *   **Max Drawdown:** 95.75%
-*   **Indicator:** `div(sub(high, low), rolling_mean(sub(high, low), 14))`.
-*   **Entry Logic:**
-    *   (High - Low) > 3.5x the Average True Range (ATR).
-    *   Candle Closes in the opposite direction of the wick.
-*   **Risk Management:**
-    *   **Stop Loss:** 0.6% (30% equity risk at 50x).
-    *   **Take Profit:** 3.5% (175% equity gain at 50x).
+## Strategy 3: GP-Evolved "Log-Velocity"
+**Rationale:** Targets price acceleration. While the win rate is lower (14%), the "explosive" nature of the moves it catches often leads to >15% runs.
+*   **Indicator:** `log(div(close, sqrt(open)))`.
 
-## Strategy 3: GP-Evolved "Log-Intensity" Scalp
-**Rationale:** Uses non-linear log-ratios to detect buying pressure invisible to linear oscillators.
-*   **Indicator:** `log(div(close, sqrt(add(open, log(volume)))))`.
+## Strategy 4: Liquidity Grab (10% Swing)
+**Rationale:** After a 48h low is breached and recovered, ROSE frequently rallies 10% to test previous resistance.
 
-## Strategy 4: The "Wick Grab" Reversal
-**Rationale:** Targets "V-Shape" recoveries following sharp 1.5% intra-candle drops.
-
-## Strategy 5: Hyper-Accelerated Trend Follower
-**Rationale:** Uses EMA-8/21 cross-over combined with GP volume confirmation to compound gains during sustained trends.
+## Strategy 5: SMA Trend Compounding
+**Rationale:** Uses a trailing 10% TP to capture the "meat" of 2-year trends.
 
 ---
 
-## Technical Summary of Selection
-The "explosive growth" strategy relies on **positive skewness**—taking many small losses and a few massive wins. At 50x leverage, the trading fees (0.04% per side) account for a significant portion of the equity curve, meaning the Payoff Ratio (3:1 or higher) is critical for survival. Reaching the **1000% monthly target** is possible only during periods of extreme volatility where Strategy 1 and 2 can catch multiple vertical moves in quick succession.
+## Technical Constraints for 50x Leverage
+At 50x leverage, a 2% price move (the Stop Loss) results in a **100% loss of position equity**.
+*   **Survival Strategy:** To trade this profile at 50x, the trader must utilize **Isolated Margin** and only risk 1-2% of the total account balance per trade.
+*   **Profit Impact:** A successful 10% TP results in a **500% gain** on the position equity, minus 4% in trading fees.
+*   **Statistical Edge:** Because the Win Rate (18.97%) is higher than the break-even (16.6%), the strategy is mathematically profitable over a large sample size, despite the high volatility of the equity curve.
